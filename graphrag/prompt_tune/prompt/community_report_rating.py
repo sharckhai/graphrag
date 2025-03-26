@@ -122,6 +122,8 @@ A float score between 0-10 that represents the relevance of the text to sustaina
 
 {persona}
 
+Now provide an importance criteria for the following data, given the domain and persona:
+
 # Data
 
 {input_text}

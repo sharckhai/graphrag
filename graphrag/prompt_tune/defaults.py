@@ -11,6 +11,10 @@ DEFAULT_TASK = """
 Identify the relations and structure of the community of interest, specifically within the {domain} domain.
 """
 
+SOFTWARE_TASK = """
+Identify the relations and structure of the software provided. Focus on fucntion calls and ralationhships between classes, methods, and functions.
+"""
+
 K = 15
 LIMIT = 15
 MAX_TOKEN_COUNT = 2000

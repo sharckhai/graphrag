@@ -4,10 +4,12 @@
 # Licensed under the MIT License
 
 from graphrag.language_model.protocol.base import ChatModel
-from graphrag.prompt_tune.prompt.community_report_rating import (
+#from graphrag.prompt_tune.prompt.community_report_rating import (
+#    GENERATE_REPORT_RATING_PROMPT,
+#)
+from graphrag.prompt_tune.prompt.community_report_rating_software import (
     GENERATE_REPORT_RATING_PROMPT,
 )
-
 
 async def generate_community_report_rating(
     model: ChatModel, domain: str, persona: str, docs: str | list[str]

@@ -55,6 +55,7 @@ Avoid general entity types such as "other" or "unknown".
 This is VERY IMPORTANT: Do not generate redundant or overlapping entity types. For example, if the text contains "company" and "organization" entity types, you should return only one of them.
 Don't worry about quantity, always choose quality over quantity. And make sure EVERYTHING in your answer is relevant to the context of entity extraction.
 Return the entity types in JSON format with "entities" as the key and the entity types as an array of strings.
+Only return a valid JSON response, nothing else.
 =====================================================================
 EXAMPLE SECTION: The following section includes example output. These examples **must be excluded from your answer**.
 
