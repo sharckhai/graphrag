@@ -5,6 +5,7 @@
 
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompt_tune.prompt.language import DETECT_LANGUAGE_PROMPT
+from graphrag.utils.basic import count_tokens
 
 
 async def detect_language(model: ChatModel, docs: str | list[str]) -> str:
@@ -24,4 +25,4 @@ async def detect_language(model: ChatModel, docs: str | list[str]) -> str:
 
     response = await model.achat(language_prompt)
 
-    return str(response.output.content)
+    return str(response.output.content), count_tokens(language_prompt)

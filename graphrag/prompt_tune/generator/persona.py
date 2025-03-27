@@ -6,6 +6,7 @@
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompt_tune.defaults import DEFAULT_TASK
 from graphrag.prompt_tune.prompt.persona import GENERATE_PERSONA_PROMPT
+from graphrag.utils.basic import count_tokens
 
 
 async def generate_persona(
@@ -24,4 +25,4 @@ async def generate_persona(
 
     response = await model.achat(persona_prompt)
 
-    return str(response.output.content)
+    return str(response.output.content), count_tokens(persona_prompt)

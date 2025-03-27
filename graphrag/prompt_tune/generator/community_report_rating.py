@@ -10,6 +10,7 @@ from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompt_tune.prompt.community_report_rating_software import (
     GENERATE_REPORT_RATING_PROMPT,
 )
+from graphrag.utils.basic import count_tokens
 
 async def generate_community_report_rating(
     model: ChatModel, domain: str, persona: str, docs: str | list[str]
@@ -34,4 +35,4 @@ async def generate_community_report_rating(
 
     response = await model.achat(domain_prompt)
 
-    return str(response.output.content).strip()
+    return str(response.output.content).strip(), count_tokens(domain_prompt)

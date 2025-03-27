@@ -90,6 +90,9 @@ async def generate_indexing_prompts(
     -------
     tuple[str, str, str]: entity extraction prompt, entity summarization prompt, community summarization prompt
     """
+
+    max_tokens = 0
+
     # Retrieve documents
     logger.info("Chunking documents...")
     doc_list = await load_docs_in_chunks(
@@ -129,23 +132,32 @@ async def generate_indexing_prompts(
 
     if not domain:
         logger.info("Generating domain...")
-        domain = await generate_domain(llm, doc_list)
+        domain, tokens = await generate_domain(llm, doc_list)
+
+    max_tokens += tokens
 
     if not language:
         logger.info("Detecting language...")
-        language = await detect_language(llm, doc_list)
+        language, tokens = await detect_language(llm, doc_list)
+
+    max_tokens += tokens
 
     logger.info("Generating persona...")
-    persona = await generate_persona(llm, domain)
+    persona, tokens = await generate_persona(llm, domain)
+
+    max_tokens += tokens
 
     print('-'*50)
     print(persona)
     print('-'*50)
 
     logger.info("Generating community report ranking description...")
-    community_report_ranking = await generate_community_report_rating(
+    community_report_ranking, tokens = await generate_community_report_rating(
         llm, domain=domain, persona=persona, docs=doc_list
     )
+
+    max_tokens += tokens
+
     print('-'*50)
     print(community_report_ranking)
     print('-'*50)
@@ -171,7 +183,7 @@ async def generate_indexing_prompts(
     print('-'*50)
 
     logger.info("Generating entity relationship examples...")
-    examples = await generate_entity_relationship_examples(
+    examples, tokens = await generate_entity_relationship_examples(
         llm,
         persona=persona,
         entity_types=entity_types,
@@ -179,6 +191,8 @@ async def generate_indexing_prompts(
         language=language,
         json_mode=False,  # config.llm.model_supports_json should be used, but these prompts are used in non-json mode by the index engine
     )
+
+    max_tokens += tokens
 
     print('-'*50)
     print(examples)
@@ -203,9 +217,11 @@ async def generate_indexing_prompts(
     )
 
     logger.info("Generating community reporter role...")
-    community_reporter_role = await generate_community_reporter_role(
+    community_reporter_role, tokens = await generate_community_reporter_role(
         llm, domain=domain, persona=persona, docs=doc_list
     )
+
+    max_tokens += tokens
 
     logger.info("Generating community summarization prompt...")
     community_summarization_prompt = create_community_summarization_prompt(
@@ -218,6 +234,7 @@ async def generate_indexing_prompts(
     logger.info(f"\nGenerated domain: {domain}")  # noqa: G004
     logger.info(f"\nDetected language: {language}")  # noqa: G004
     logger.info(f"\nGenerated persona: {persona}")  # noqa: G004
+    logger.info(f"Max tokens: {max_tokens}")
 
     return (
         extract_graph_prompt,

@@ -11,6 +11,7 @@ from graphrag.prompt_tune.prompt.entity_relationship import (
     ENTITY_RELATIONSHIPS_GENERATION_PROMPT,
     UNTYPED_ENTITY_RELATIONSHIPS_GENERATION_PROMPT,
 )
+from graphrag.utils.basic import count_tokens
 
 MAX_EXAMPLES = 5
 
@@ -62,4 +63,8 @@ async def generate_entity_relationship_examples(
 
     responses = await asyncio.gather(*tasks)
 
-    return [str(response.output.content) for response in responses]
+    history_text = " ".join(msg["content"] for msg in history)
+    total_tokens = sum(count_tokens(message + " " + history_text) for message in messages)
+
+
+    return [str(response.output.content) for response in responses], total_tokens

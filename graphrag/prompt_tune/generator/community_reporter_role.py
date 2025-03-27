@@ -7,7 +7,7 @@ from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompt_tune.prompt.community_reporter_role import (
     GENERATE_COMMUNITY_REPORTER_ROLE_PROMPT,
 )
-
+from graphrag.utils.basic import count_tokens
 
 async def generate_community_reporter_role(
     model: ChatModel, domain: str, persona: str, docs: str | list[str]
@@ -32,4 +32,4 @@ async def generate_community_reporter_role(
 
     response = await model.achat(domain_prompt)
 
-    return str(response.output.content)
+    return str(response.output.content), count_tokens(domain_prompt)

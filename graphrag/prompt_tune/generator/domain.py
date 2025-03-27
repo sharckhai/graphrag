@@ -5,7 +5,7 @@
 
 from graphrag.language_model.protocol.base import ChatModel
 from graphrag.prompt_tune.prompt.domain import GENERATE_DOMAIN_PROMPT
-
+from graphrag.utils.basic import count_tokens
 
 async def generate_domain(model: ChatModel, docs: str | list[str]) -> str:
     """Generate an LLM persona to use for GraphRAG prompts.
@@ -24,4 +24,4 @@ async def generate_domain(model: ChatModel, docs: str | list[str]) -> str:
 
     response = await model.achat(domain_prompt)
 
-    return str(response.output.content)
+    return str(response.output.content), count_tokens(domain_prompt)

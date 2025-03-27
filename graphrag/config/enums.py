@@ -36,6 +36,8 @@ class InputFileType(str, Enum):
     """The text input type."""
     json = "json"
     """The JSON input type."""
+    code = "code"
+    """The code input type."""
 
     def __repr__(self):
         """Get a string representation."""
