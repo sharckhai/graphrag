@@ -178,10 +178,6 @@ async def generate_indexing_prompts(
             json_mode=extract_graph_llm_settings.model_supports_json or False,
         )
 
-    print('-'*50)
-    print(entity_types)
-    print('-'*50)
-
     logger.info("Generating entity relationship examples...")
     examples, tokens = await generate_entity_relationship_examples(
         llm,

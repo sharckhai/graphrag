@@ -86,6 +86,8 @@ def create_base_text_units(
         metadata_str = ""
         metadata_tokens = 0
 
+        prepend_metadata = True ############################################################ NOTE
+
         if prepend_metadata and "metadata" in row:
             metadata = row["metadata"]
             if isinstance(metadata, str):
@@ -117,6 +119,9 @@ def create_base_text_units(
             for index, chunk in enumerate(chunked):
                 if isinstance(chunk, str):
                     chunked[index] = metadata_str + chunk
+                elif hasattr(chunk, 'text_chunk'):  # Handle TextChunk objects
+                    chunk.text_chunk = metadata_str + chunk.text_chunk
+                    chunked[index] = chunk
                 else:
                     chunked[index] = (
                         (chunk[0], metadata_str + chunk[1], chunk[2]) if chunk else None

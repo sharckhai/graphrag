@@ -14,6 +14,9 @@ from graphrag.index.text_splitting.text_splitting import (
     Tokenizer,
     split_multiple_texts_on_tokens,
 )
+from graphrag.index.code_splitting.code_splitting import (
+    split_multiple_code_texts_on_tokens,
+)
 from graphrag.logger.progress import ProgressTicker
 
 
@@ -44,6 +47,29 @@ def run_tokens(
 
     encode, decode = get_encoding_fn(encoding_name)
     return split_multiple_texts_on_tokens(
+        input,
+        Tokenizer(
+            chunk_overlap=chunk_overlap,
+            tokens_per_chunk=tokens_per_chunk,
+            encode=encode,
+            decode=decode,
+        ),
+        tick,
+    )
+
+
+def run_tokens_code(
+    input: list[str],
+    config: ChunkingConfig,
+    tick: ProgressTicker,
+) -> Iterable[TextChunk]:
+    """Chunks code into chunks based on encoding tokens while respecting line boundaries."""
+    tokens_per_chunk = config.size
+    chunk_overlap = config.overlap
+    encoding_name = config.encoding_model
+
+    encode, decode = get_encoding_fn(encoding_name)
+    return split_multiple_code_texts_on_tokens(
         input,
         Tokenizer(
             chunk_overlap=chunk_overlap,

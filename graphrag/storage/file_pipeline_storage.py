@@ -106,7 +106,7 @@ class FilePipelineStorage(PipelineStorage):
         encoding = None if as_bytes else (encoding or self._encoding)
 
         async with aiofiles.open(
-            path,
+            str(path),
             cast("Any", read_type),
             encoding=encoding,
         ) as f:

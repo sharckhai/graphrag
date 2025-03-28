@@ -1,0 +1,140 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: "Apply this rule always."
+alwaysApply: true
+---
+
+Cursor Rules:
+Every output must start with “_general rules respected_” as one of the first lines.
+
+# GraphRAG: A graph-based retrieval-augmented generation (RAG) system
+
+This project is a Python-based RAG system that uses graph-based approaches for retrieval and generation. The system supports multiple file types, vector stores, and language models.
+
+## Technologies used:
+- Python 3.10-3.13
+- Poetry: Package management and dependency resolution
+- Ruff: Code formatting and linting
+- Pydantic: Data validation and settings management
+- OpenAI: Language models and embeddings
+- Azure: Vector stores and cloud services
+- NetworkX: Graph operations
+- Pandas: Data manipulation
+- NLTK: Natural language processing
+- Tiktoken: Token counting and text splitting
+- MkDocs: Documentation
+- Pytest: Testing framework
+- Jupyter: Notebook support
+
+## Project Structure
+.
+├── graphrag/                      # Main package directory
+│   ├── api/                       # API endpoints
+│   ├── callbacks/                 # Callback implementations
+│   ├── cli/                       # Command-line interface
+│   ├── config/                    # Configuration management
+│   │   ├── models/               # Configuration models
+│   │   ├── defaults.py           # Default configuration values
+│   │   ├── embeddings.py         # Embedding configuration
+│   │   ├── environment_reader.py # Environment variable handling
+│   │   ├── errors.py             # Configuration errors
+│   │   ├── init_content.py       # Initial configuration content
+│   │   ├── load_config.py        # Configuration loading
+│   │   ├── logging.py            # Logging configuration
+│   │   └── create_graphrag_config.py
+│   ├── data_model/               # Data models
+│   ├── index/                    # Indexing operations
+│   │   ├── code_splitting/       # Code-specific splitting
+│   │   ├── input/               # Input handling
+│   │   ├── operations/          # Core operations
+│   │   ├── text_splitting/      # Text splitting logic
+│   │   ├── update/              # Update operations
+│   │   ├── workflows/           # Workflow definitions
+│   │   ├── run/                 # Runtime operations
+│   │   ├── typing/              # Type definitions
+│   │   └── validate_config.py   # Configuration validation
+│   ├── language_model/          # Language model integration
+│   ├── logger/                  # Logging utilities
+│   ├── prompt_tune/             # Prompt tuning functionality
+│   ├── prompts/                 # Prompt templates
+│   ├── query/                   # Query operations
+│   ├── storage/                 # Storage implementations
+│   ├── utils/                   # Utility functions
+│   └── vector_stores/           # Vector store implementations
+├── tests/                       # Test suite
+│   ├── integration/             # Integration tests
+│   ├── smoke/                   # Smoke tests
+│   ├── unit/                    # Unit tests
+│   └── verbs/                   # Verb-specific tests
+├── docs/                        # Documentation
+├── examples_notebooks/          # Example notebooks
+├── scripts/                     # Utility scripts
+├── .github/                     # GitHub configuration
+├── .semversioner/              # Version management
+├── .vscode/                    # VS Code configuration
+├── pyproject.toml              # Project configuration
+├── poetry.lock                 # Dependency lock file
+├── mkdocs.yaml                 # MkDocs configuration
+├── README.md                   # Project documentation
+├── CHANGELOG.md                # Change log
+├── CONTRIBUTING.md             # Contribution guidelines
+├── DEVELOPING.md               # Development guidelines
+├── LICENSE                     # License file
+├── SECURITY.md                 # Security policy
+├── SUPPORT.md                  # Support guidelines
+└── breaking-changes.md         # Breaking changes documentation
+
+## Code Style and Quality
+- Use Python 3.10+ features
+- Follow PEP 8 style guide
+- Use type hints for all function parameters and return values
+- Use docstrings in Google style format
+- Use async/await for I/O operations
+- Use Pydantic models for configuration and data validation
+- Use Ruff for code formatting and linting
+- Use Poetry for dependency management
+
+## Testing
+- Write unit tests for all new functionality
+- Include integration tests for complex features
+- Use pytest for testing
+- Maintain test coverage above 80%
+- Use pytest-asyncio for async tests
+
+## Documentation
+- Document all public APIs
+- Include docstrings for all classes and methods
+- Keep README.md up to date
+- Document breaking changes in breaking-changes.md
+- Use MkDocs for documentation
+
+## Git Usage
+We follow the Conventional Commits specification for commit messages:
+- "fix:" for bug fixes
+- "feat:" for new features
+- "perf:" for performance improvements
+- "docs:" for documentation changes
+- "style:" for formatting changes
+- "refactor:" for code refactoring
+- "test:" for adding missing tests
+- "chore:" for maintenance tasks
+
+Rules:
+- Use lowercase for commit messages
+- Keep the summary line concise
+- Include descriptions for non-obvious changes
+- Reference issue numbers when applicable
+
+## Development Workflow
+1. Create a new branch for your feature/fix
+2. Make changes following the code style guidelines
+3. Add tests for new functionality
+4. Update documentation as needed
+5. Run tests and linting
+6. Create a pull request
+7. Address review comments
+8. Merge after approval

@@ -99,6 +99,8 @@ class GraphRagConfig(BaseModel):
         if len(self.input.file_pattern) == 0:
             if self.input.file_type == defs.InputFileType.text:
                 self.input.file_pattern = ".*\\.txt$"
+            elif self.input.file_type == defs.InputFileType.code:
+                self.input.file_pattern = ".*\\.py$"
             else:
                 self.input.file_pattern = f".*\\.{self.input.file_type.value}$"
 

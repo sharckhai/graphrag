@@ -5,19 +5,24 @@
 
 GRAPH_EXTRACTION_PROMPT = """
 -Goal-
-Given a text document that is potentially relevant to this activity and a list of entity types, identify all entities of those types from the text and all relationships among the identified entities.
+Given a text document (potentially Python code) and a list of entity types, identify all entities of those types in the text while ignoring external imports. Additionally, identify all relationships among the recognized entities.
 
 -Steps-
 1. Identify all entities. For each identified entity, extract the following information:
 - entity_name: Name of the entity, capitalized
+- entity_specific_filepath: A placeholder representing the local file path or local import path relevant to where the entity actually lives
 - entity_type: One of the following types: [{entity_types}]
 - entity_description: Comprehensive description of the entity's attributes and activities
-Format each entity as ("entity"{{tuple_delimiter}}<entity_name>{{tuple_delimiter}}<entity_type>{{tuple_delimiter}}<entity_description>)
+Important:
+- If you are evaluating code, do not create entities for external imports (e.g., import os, import requests, etc.).
+- Only create entities for local imports (i.e., imports that reference modules within the same repository).
+Format each entity as ("entity"{{tuple_delimiter}}<entity_specific_filepath>.<entity_name>{{tuple_delimiter}}<entity_type>{{tuple_delimiter}}<entity_description>)
+
 
 2. From the entities identified in step 1, identify all pairs of (source_entity, target_entity) that are *clearly related* to each other.
 For each pair of related entities, extract the following information:
-- source_entity: name of the source entity, as identified in step 1
-- target_entity: name of the target entity, as identified in step 1
+- source_entity: <entity_specific_filepath>.<entity_name> (as identified in Step 1)
+- target_entity: <entity_specific_filepath>.<entity_name> (as identified in Step 1)
 - relationship_description: explanation as to why you think the source entity and the target entity are related to each other
 - relationship_strength: an integer score between 1 to 10, indicating strength of the relationship between the source entity and target entity
 Format each relationship as ("relationship"{{tuple_delimiter}}<source_entity>{{tuple_delimiter}}<target_entity>{{tuple_delimiter}}<relationship_description>{{tuple_delimiter}}<relationship_strength>)
@@ -40,24 +45,29 @@ text: {{input_text}}
 output:"""
 
 GRAPH_EXTRACTION_JSON_PROMPT = """
--Goal-
-Given a text document that is potentially relevant to this activity and a list of entity types, identify all entities of those types from the text and all relationships among the identified entities.
+Given a text document (potentially Python code) and a list of entity types, identify all entities of those types in the text while ignoring external imports. Additionally, identify all relationships among the recognized entities.
 
 -Steps-
 1. Identify all entities. For each identified entity, extract the following information:
 - entity_name: Name of the entity, capitalized
+- entity_specific_filepath: A placeholder representing the local file path or local import path relevant to where the entity actually lives
 - entity_type: One of the following types: [{entity_types}]
 - entity_description: Comprehensive description of the entity's attributes and activities
+Important:
+- If you are evaluating code, do not create entities for external imports (e.g., import os, import requests, etc.).
+- Only create entities for local imports (i.e., imports that reference modules within the same repository).
+
 Format each entity output as a JSON entry with the following format:
 
-{{"name": <entity name>, "type": <type>, "description": <entity description>}}
+{{"name": <entity_specific_filepath>.<entity_name>, "type": <entity_type>, "description": <entity_description>}}
 
 2. From the entities identified in step 1, identify all pairs of (source_entity, target_entity) that are *clearly related* to each other.
 For each pair of related entities, extract the following information:
-- source_entity: name of the source entity, as identified in step 1
-- target_entity: name of the target entity, as identified in step 1
+- source_entity: <entity_specific_filepath>.<entity_name> (as identified in Step 1)
+- target_entity: <entity_specific_filepath>.<entity_name> (as identified in Step 1)
 - relationship_description: explanation as to why you think the source entity and the target entity are related to each other
 - relationship_strength: an integer score between 1 to 10, indicating strength of the relationship between the source entity and target entity
+
 Format each relationship as a JSON entry with the following format:
 
 {{"source": <source_entity>, "target": <target_entity>, "relationship": <relationship_description>, "relationship_strength": <relationship_strength>}}

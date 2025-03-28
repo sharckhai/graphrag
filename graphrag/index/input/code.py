@@ -35,12 +35,9 @@ async def load_code(
         text = await storage.get(path, encoding=config.encoding)
         new_item = {**group, "text": text}
         new_item["id"] = gen_sha512_hash(new_item, new_item.keys())
-
-        ### we need to define project root to get the relative path
-        project_root = Path(config.base_dir)
-
-        new_item["title"] = str(Path(path).relative_to(project_root))
+        new_item["title"] = str(path)   
         new_item["creation_date"] = await storage.get_creation_date(path)
+        new_item["metadata"] = [{"repository": str(path).split('.')[0]}, {"filename": str(path)}]
         return pd.DataFrame([new_item])
 
     return await load_files(load_file, config, storage, progress)
