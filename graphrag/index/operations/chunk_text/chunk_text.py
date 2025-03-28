@@ -125,6 +125,13 @@ def load_strategy(strategy: ChunkStrategyType) -> ChunkStrategy:
 
             bootstrap()
             return run_sentences
+        case ChunkStrategyType.code:
+            # custom
+            #from graphrag.index.operations.chunk_text.bootstrap import bootstrap
+            from graphrag.index.operations.chunk_text.strategies import run_tokens_code
+
+            #bootstrap() TODO: check what bootstrap is
+            return run_tokens_code
         case _:
             msg = f"Unknown strategy: {strategy}"
             raise ValueError(msg)
