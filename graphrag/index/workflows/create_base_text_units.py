@@ -82,7 +82,7 @@ def create_base_text_units(
     aggregated.rename(columns={"text_with_ids": "texts"}, inplace=True)
 
     def chunker(row: dict[str, Any]) -> Any:
-        line_delimiter = ".\n"
+        line_delimiter = "\n"
         metadata_str = ""
         metadata_tokens = 0
 

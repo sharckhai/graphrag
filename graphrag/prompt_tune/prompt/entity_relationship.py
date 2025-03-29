@@ -15,7 +15,7 @@ Given a text document (potentially Python code) and a list of entity types, iden
 - entity_description: Comprehensive description of the entity's attributes and activities
 Important:
 - If you are evaluating code, do not create entities for external imports (e.g., import os, import requests, etc.).
-- Only create entities for local imports (i.e., imports that reference modules within the same repository).
+- Only create entities for local imports (i.e., imports that reference modules within the same repository) if they are used in the code.
 Format each entity as ("entity"{{tuple_delimiter}}<entity_specific_filepath>.<entity_name>{{tuple_delimiter}}<entity_type>{{tuple_delimiter}}<entity_description>)
 
 
@@ -161,7 +161,7 @@ Given a text document (potentially Python code) and a list of entity types, iden
 - entity_description: Comprehensive description of the entity's attributes and activities
 Important:
 - If you are evaluating code, do not create entities for external imports (e.g., import os, import requests, etc.).
-- Only create entities for local imports (i.e., imports that reference modules within the same repository).
+- Only create entities for local imports (i.e., imports that reference modules within the same repository) if they are used in the code.
 
 Format each entity output as a JSON entry with the following format:
 

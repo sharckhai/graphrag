@@ -147,10 +147,6 @@ async def generate_indexing_prompts(
 
     max_tokens += tokens
 
-    print('-'*50)
-    print(persona)
-    print('-'*50)
-
     logger.info("Generating community report ranking description...")
     community_report_ranking, tokens = await generate_community_report_rating(
         llm, domain=domain, persona=persona, docs=doc_list
@@ -158,13 +154,7 @@ async def generate_indexing_prompts(
 
     max_tokens += tokens
 
-    print('-'*50)
-    print(community_report_ranking)
-    print('-'*50)
-
-    entity_types = ['class', 'method', 'function', 'package (import)', 'interface']
     discover_entity_types = False
-
     extract_graph_llm_settings = config.get_language_model_config(
         config.extract_graph.model_id
     )
@@ -177,6 +167,8 @@ async def generate_indexing_prompts(
             docs=doc_list,
             json_mode=extract_graph_llm_settings.model_supports_json or False,
         )
+    else:
+        entity_types = config.extract_graph.entity_types
 
     logger.info("Generating entity relationship examples...")
     examples, tokens = await generate_entity_relationship_examples(
@@ -189,10 +181,6 @@ async def generate_indexing_prompts(
     )
 
     max_tokens += tokens
-
-    print('-'*50)
-    print(examples)
-    print('-'*50)
 
     logger.info("Generating entity extraction prompt...")
     extract_graph_prompt = create_extract_graph_prompt(

@@ -1,5 +1,6 @@
 import ast
 from typing import List, Tuple
+import numpy as np  # Add this import at the top
 
 from graphrag.index.text_splitting.text_splitting import Tokenizer
 from graphrag.index.text_splitting.text_splitting import TextChunk
@@ -65,9 +66,16 @@ class ImportCollector(ast.NodeVisitor):
         self.imports.append(line)
         
     def visit_ImportFrom(self, node: ast.ImportFrom):
-        # Get the exact line from source
-        line = self.source_lines[node.lineno - 1]
-        self.imports.append(line)
+        # For multi-line imports, we need to collect all lines from start to end
+        start_line = node.lineno - 1  # Convert to 0-based index
+        end_line = getattr(node, 'end_lineno', start_line)
+        if end_line is None:
+            end_line = start_line
+        
+        # Collect all lines of the import statement
+        import_lines = self.source_lines[start_line:end_line]
+        complete_import = '\n'.join(import_lines)
+        self.imports.append(complete_import)
 
 
 def build_scope_string(scopes: list[tuple[str, str]]) -> str:
@@ -97,7 +105,7 @@ def chunk_code_with_ast_scope(
     code: str,
     tokenizer,
     max_tokens: int,
-    overlap_lines: int = 0
+    token_overlap: int = 0
 ):
     """
     1. Parse the code into an AST.
@@ -120,9 +128,9 @@ def chunk_code_with_ast_scope(
     line_scopes = tracker.line_scopes
     
     # Debug: Print scopes for each line
-    for i, scopes in enumerate(line_scopes):
-        if scopes:  # Only print lines that have scopes
-            print(f"Line {i+1}: {scopes}")
+    #for i, scopes in enumerate(line_scopes):
+    #    if scopes:  # Only print lines that have scopes
+    #        print(f"Line {i+1}: {scopes}")
     
     n_lines = len(source_lines)
     chunks = []
@@ -136,23 +144,19 @@ def chunk_code_with_ast_scope(
         # Calculate tokens for imports and scope header
         scope_header = build_scope_string(first_line_scope)
         headers = []
-        if import_header:
-            headers.append(import_header)
-        if scope_header:
-            headers.append(scope_header)
+        if chunks:  # Only add headers if this is not the first chunk
+            if import_header:
+                headers.append(import_header)
+            if scope_header:
+                headers.append(scope_header)
         header = '\n'.join(headers)
-        current_tokens = len(tokenizer.encode(header)) if header else 0
-        
-        # Debug: Print chunk start information
-        print(f"\nStarting new chunk at line {idx+1}")
-        print(f"Scope: {first_line_scope}")
-        print(f"Headers: {headers}")
+        current_tokens = len(tokenizer.encode(header)) if headers else 0
         
         while idx < n_lines:
             line = source_lines[idx]
             # Count tokens for the line plus newline
             test_chunk = '\n'.join(chunk_lines + [line])
-            if header:
+            if headers:  # Only add headers if we have them (not first chunk)
                 test_chunk = header + '\n' + test_chunk
             
             chunk_tokens = len(tokenizer.encode(test_chunk))
@@ -172,10 +176,11 @@ def chunk_code_with_ast_scope(
         
         # Create the chunk with imports and scope header
         chunk_parts = []
-        if import_header:
-            chunk_parts.append(import_header)
-        if scope_header:
-            chunk_parts.append(scope_header)
+        if chunks:  # Only add headers if this is not the first chunk
+            if import_header:
+                chunk_parts.append(import_header)
+            if scope_header:
+                chunk_parts.append(scope_header)
         chunk_parts.append('\n'.join(chunk_lines))
         chunk_text = '\n'.join(chunk_parts)
             
@@ -184,8 +189,26 @@ def chunk_code_with_ast_scope(
         if idx >= n_lines:
             break
             
-        # Handle overlap
-        new_start = idx - overlap_lines
+        # Calculate how many lines we need to overlap to meet the token_overlap requirement
+        if token_overlap > 0:
+            try:
+                # Try batch encoding if supported by tokenizer
+                line_token_lengths = np.array([len(tokens) for tokens in tokenizer.encode(chunk_lines)])
+            except (AttributeError, TypeError):
+                # Fallback to individual encoding if batch encoding not supported
+                line_token_lengths = np.array([len(tokenizer.encode(line)) for line in chunk_lines])
+                
+            # Reverse the array and get cumulative sum
+            cumulative_tokens = np.cumsum(line_token_lengths[::-1])
+            # Find where cumulative sum exceeds token_overlap
+            overlap_mask = cumulative_tokens <= token_overlap
+            overlap_lines = np.sum(overlap_mask)
+            
+            # Calculate new start index with overlap
+            new_start = idx - overlap_lines
+        else:
+            new_start = idx
+            
         start_idx = max(new_start, start_idx + 1)  # Ensure we always advance
     
     return chunks
@@ -201,7 +224,12 @@ def split_multiple_code_texts_on_tokens(
     result = []
     
     for source_doc_idx, text in enumerate(texts):
-        chunks = chunk_code_with_ast_scope(text, tokenizer, tokenizer.tokens_per_chunk)
+        chunks = chunk_code_with_ast_scope(
+            text, 
+            tokenizer, 
+            tokenizer.tokens_per_chunk,
+            tokenizer.chunk_overlap
+        )
         for chunk in chunks:
             result.append(TextChunk(
                 text_chunk=chunk,

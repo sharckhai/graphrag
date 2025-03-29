@@ -37,7 +37,7 @@ async def load_code(
         new_item["id"] = gen_sha512_hash(new_item, new_item.keys())
         new_item["title"] = str(path)   
         new_item["creation_date"] = await storage.get_creation_date(path)
-        new_item["metadata"] = [{"repository": str(path).split('.')[0]}, {"filename": str(path)}]
+        new_item["metadata"] = {"repository": str(path).split('/')[0], "filename": str(path)}
         return pd.DataFrame([new_item])
 
     return await load_files(load_file, config, storage, progress)
