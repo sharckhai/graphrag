@@ -55,7 +55,7 @@ async def run_workflow(
     summarization_strategy = config.community_reports.resolved_strategy(
         config.root_dir, community_reports_llm_settings
     )
-
+    print("1")
     output = await create_community_reports(
         edges_input=edges,
         entities=entities,
@@ -67,9 +67,9 @@ async def run_workflow(
         async_mode=async_mode,
         num_threads=num_threads,
     )
-
+    print("2")
     await write_table_to_storage(output, "community_reports", context.storage)
-
+    print("3")
     return WorkflowFunctionOutput(result=output)
 
 

@@ -45,14 +45,14 @@ def _get_workflows_list(
     match method:
         case IndexingMethod.Standard:
             return [
-                "create_base_text_units",
-                "create_final_documents",
-                "extract_graph",
-                "finalize_graph",
-                *(["extract_covariates"] if config.extract_claims.enabled else []),
-                "create_communities",
-                "create_final_text_units",
-                "create_community_reports",
+                #"create_base_text_units",
+                #"create_final_documents",
+                #"extract_graph",
+                #"finalize_graph",
+                #*(["extract_covariates"] if config.extract_claims.enabled else []),
+                #"create_communities",
+                #"create_final_text_units",
+                #"create_community_reports",
                 "generate_text_embeddings",
             ]
         case IndexingMethod.Fast:

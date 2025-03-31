@@ -86,6 +86,7 @@ class CommunityReportsExtractor:
             )
 
             output = response.parsed_response
+            #output = _parse_json_response(response.output.content)
         except Exception as e:
             log.exception("error generating community report")
             self._on_error(e, traceback.format_exc(), None)
@@ -101,3 +102,17 @@ class CommunityReportsExtractor:
             f"## {f.summary}\n\n{f.explanation}" for f in report.findings
         )
         return f"# {report.title}\n\n{report.summary}\n\n{report_sections}"
+    
+import json
+
+def _parse_json_response(response) -> CommunityReportResponse:
+    try:
+        if response.startswith("```json"):
+            response = response[7:-3]
+            return json.loads(response)
+        else:
+            # 当作纯 JSON 处理
+            return json.loads(response)
+    except json.JSONDecodeError:
+        print("JSON-DECODE-ERROR")
+        return {}

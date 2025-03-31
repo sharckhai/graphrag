@@ -50,6 +50,8 @@ async def run_pipeline(
 
     dataset = await create_input(config.input, logger, root_dir)
 
+    print("BEFORE _run_pipeline")
+
     if is_update_run:
         logger.info("Running incremental indexing.")
 
@@ -136,11 +138,16 @@ async def _run_pipeline(
         await write_table_to_storage(dataset, "documents", context.storage)
 
         for name, workflow_function in pipeline.run():
+
+            print("running workflow", name)
+            
             last_workflow = name
             progress = logger.child(name, transient=False)
             callbacks.workflow_start(name, None)
             work_time = time.time()
+            print("before")
             result = await workflow_function(config, context)
+            print("after")
             progress(Progress(percent=1))
             callbacks.workflow_end(name, result)
             yield PipelineRunResult(

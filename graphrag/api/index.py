@@ -69,6 +69,8 @@ async def build_index(
 
     workflow_callbacks.pipeline_start(pipeline.names())
 
+    print("BEFORE RUN PIPELINE")
+
     async for output in run_pipeline(
         pipeline,
         config,
